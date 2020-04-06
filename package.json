@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "during this project im gonna learn something about real time web, very fun",
-  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www"
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -18,9 +17,11 @@
     "hbs": "^4.1.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "handlebars": "^4.7.6",
     "nodemon": "^2.0.2"
   },
   "repository": {
