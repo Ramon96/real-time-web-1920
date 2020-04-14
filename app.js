@@ -4,6 +4,8 @@ var express = require('express');
 var app = express();
 var server = require("http").Server(app);
 var io = require('socket.io')(server);
+
+
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -11,6 +13,7 @@ var logger = require('morgan');
 var hbs = require('express-handlebars');
 
 var indexRouter = require('./routes/index');
+var socialRouter = require('./routes/social');
 
 
 
@@ -30,21 +33,35 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'src')));
 
 // Routes
- app.use(indexRouter);
+app.use(indexRouter);
+app.use(socialRouter);
 
+let users = [];
 io.on('connection', function(socket){
+  // console.log('a user connected ' + socket.id);
   
-  console.log('a user connected');
-  socket.broadcast.emit('hi');
+  
+  socket.emit('greet', users, socket.id)
+  console.log(users)
 
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
 
-  socket.on('chat message', function(msg){
-    console.log('message: ',msg);
-    io.emit('chat message',  msg)
-  });
+  socket.on('adduser' , (data) => {
+    socket.broadcast.emit('adduser', data, socket.id)
+    let userData = {
+      id: socket.id,
+      data: data
+    }
+    users.push(userData)
+  })
+
+    socket.on('disconnect', function(){
+      console.log(socket.id)
+      users = users.filter( user => user.id != socket.id)
+      console.log('usersdfasdf')
+      console.log(users)
+      socket.broadcast.emit('removeuser', users)
+    });
+
 });
 
 
@@ -66,7 +83,7 @@ app.use(function(err, req, res, next) {
 
 
 server.listen(port, function () {
-  console.log("listening on :3000");
+  console.log("listening on: 3000");
 });
 
 module.exports = app;

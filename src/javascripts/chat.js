@@ -1,8 +1,15 @@
 (function () {
-    var socket = io();
-    var form = document.querySelector("#chatform");
-    var input = document.querySelector('#m');
-    var chatlog = document.querySelector('#messages');
+    let socket = io();
+    let form = document.querySelector("#chatform");
+    let input = document.querySelector('#m');
+    let chatlog = document.querySelector('#messages');
+    let username;
+
+    document.querySelector('#username').addEventListener('blur', function(){
+        setUsername();
+    })
+
+
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -11,8 +18,8 @@
     })
 
     socket.on('chat message', function (msg) {
-        var message = document.createElement('li');
-        var textContent = document.createTextNode(msg);
+        let message = document.createElement('li');
+        let textContent = document.createTextNode(msg);
         message.appendChild(textContent);
         chatlog.appendChild(message);
     })
