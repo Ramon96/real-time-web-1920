@@ -1,21 +1,19 @@
 require('dotenv').config();
-var createError = require('http-errors');
-var express = require('express');
-var app = express();
-var server = require("http").Server(app);
-var io = require('socket.io')(server);
+let createError = require('http-errors');
+let express = require('express');
+let app = express();
+let server = require("http").Server(app);
+let io = require('socket.io')(server);
 
 
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var logger = require('morgan');
-var hbs = require('express-handlebars');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let bodyParser = require('body-parser');
+let logger = require('morgan');
+let hbs = require('express-handlebars');
 
-var indexRouter = require('./routes/index');
-var socialRouter = require('./routes/social');
-
-
+let indexRouter = require('./routes/index');
+let socialRouter = require('./routes/social');
 
 const port = process.env.PORT || 3000;
 
@@ -44,15 +42,10 @@ app.use(express.static(path.join(__dirname, 'src')));
 app.use(indexRouter);
 app.use(socialRouter);
 
+// Moet dit op de route waar verbinding pas nodig is?
 let users = [];
 io.on('connection', function (socket) {
-  // console.log('a user connected ' + socket.id);
-
-
   socket.emit('greet', users, socket.id)
-  // console.log(users)
-
-
   socket.on('adduser', (data) => {
     socket.broadcast.emit('adduser', data, socket.id)
     let userData = {
@@ -80,6 +73,8 @@ io.on('connection', function (socket) {
   });
 
 });
+
+
 
 
 // catch 404 and forward to error handler
