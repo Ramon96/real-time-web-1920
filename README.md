@@ -16,23 +16,31 @@ The idea is to test wether or not peole respect each others space, will people t
 ## Installation
 Clone the project
 
-```git clone https://github.com/Ramon96/real-time-web-1920.git```
+```
+git clone https://github.com/Ramon96/real-time-web-1920.git
+```
 
 Navigate in the right folder
 
-```cd /real-time-web-1920```
+```
+cd /real-time-web-1920
+```
 
 
 Run the project
 
-```nodemon```
+```
+nodemon
+```
 
 <!-- ...but how does one use this project? What are its features 🤔 -->
 ## Features
 ### Moving around
 The server keeps track of all player locations and allows players to move around using the *asdw* keys
 
-```io.emit('updatelocations', users)```
+```
+io.emit('updatelocations', users)
+```
 
 ### Infecting
 (In progress)
