@@ -15,9 +15,11 @@ The idea is to test wether or not peole respect each others space, will people t
 <!-- How about a section that describes how to install this project? 🤓 -->
 ## Installation
 Clone the project
+
 ```git clone https://github.com/Ramon96/real-time-web-1920.git```
 
 Navigate in the right folder
+
 ```cd /real-time-web-1920```
 
 
@@ -28,6 +30,7 @@ Run the project
 ## Features
 ### Moving around
 The server keeps track of all player locations and allows players to move around using the *asdw* keys
+
 ```io.emit('updatelocations', users)```
 
 ### Infecting
