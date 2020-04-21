@@ -36,7 +36,7 @@ nodemon
 <!-- ...but how does one use this project? What are its features 🤔 -->
 ## Features
 ### Moving around
-The server keeps track of all player locations and allows players to move around using the *asdw* keys
+The server keeps track of all player locations and allows players to move around using the **asdw** keys
 
 ```
 io.emit('updatelocations', users)
