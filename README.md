@@ -26,9 +26,18 @@ Run the project
 
 <!-- ...but how does one use this project? What are its features 🤔 -->
 ## Features
+### Moving around
+The server keeps track of all player locations and allows players to move around using the *asdw* keys
+`io.emit('updatelocations', users)`
+
+### Infecting
+(In progress)
 
 <!-- What external data source is featured in your project and what are its properties 🌠 -->
 ## Api
+Im currently using the [Covid19api](https://covid19api.com/)
+I will be able to get the amount of cases, recovered and deceases from this api per country.
+I will use this data to make the experiment more extreme based on the amount of cases by chosen country.
 
 <!-- This would be a good place for your data life cycle ♻️-->
 ## Data life cycle
@@ -38,3 +47,4 @@ Run the project
 
 <!-- How about a license here? 📜  -->
 ## License
+[MIT](https://github.com/Ramon96/real-time-web-1920/blob/master/LICENSE)
