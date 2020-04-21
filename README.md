@@ -48,12 +48,27 @@ io.emit('updatelocations', users)
 <!-- What external data source is featured in your project and what are its properties 🌠 -->
 ## Api
 Im currently using the [Covid19api](https://covid19api.com/)
+The Api requires no key and documentation can be read [here](https://documenter.getpostman.com/view/10808728/SzS8rjbc)
 
 I will be able to get the amount of cases, recovered and deceases from this api per country and I will use this data to make the experiment more extreme based on the amount of cases by chosen country.
 
 <!-- This would be a good place for your data life cycle ♻️-->
 ## Data life cycle
 ![Datalifecycle](https://github.com/Ramon96/real-time-web-1920/blob/master/readme-resources/datading.png?raw=true)
+
+## Socket events
+### Greet
+When the user is greeted he/her is given an socket id and his/hers dot will be made and he will be given a random location on the canvas, this location will be send to the server and finally the user will be added to the userlist.
+
+## Adduser
+When another user joins the scene all the other already online users will be notified there is someone new. The new user will be placed on his/hers location.
+
+## updatelocations
+When the user move around their x and y coordinates will change. When they do so the coordinates will be send to the server and send to all users and updated accordingly.
+
+## Disconnect 
+When an user is disconnected, that user will be removed from the userlist and the canvas will be redrawn without that user.
+
 <!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
 ## Wishlist
 - [ ] Collition detection.
