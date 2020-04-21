@@ -65,13 +65,13 @@ I will use the data per country and increase / decrease the difficulty based om 
 ### Greet
 When the user is greeted he/her is given an socket id and his/hers dot will be made and he will be given a random location on the canvas, this location will be send to the server and finally the user will be added to the userlist.
 
-## Adduser
+### Adduser
 When another user joins the scene all the other already online users will be notified there is someone new. The new user will be placed on his/hers location.
 
-## updatelocations
+### updatelocations
 When the user move around their x and y coordinates will change. When they do so the coordinates will be send to the server and send to all users and updated accordingly.
 
-## Disconnect 
+### Disconnect 
 When an user is disconnected, that user will be removed from the userlist and the canvas will be redrawn without that user.
 
 <!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
