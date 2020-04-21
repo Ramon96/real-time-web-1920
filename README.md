@@ -53,7 +53,7 @@ I will be able to get the amount of cases, recovered and deceases from this api 
 
 <!-- This would be a good place for your data life cycle ♻️-->
 ## Data life cycle
-
+![Datalifecycle](https://github.com/Ramon96/real-time-web-1920/blob/master/readme-resources/datading.png?raw=true)
 <!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
 ## Wishlist
 - [ ] Collition detection.
