@@ -50,7 +50,12 @@ io.emit('updatelocations', users)
 Im currently using the [Covid19api](https://covid19api.com/)
 The Api requires no key and documentation can be read [here](https://documenter.getpostman.com/view/10808728/SzS8rjbc)
 
-I will be able to get the amount of cases, recovered and deceases from this api per country and I will use this data to make the experiment more extreme based on the amount of cases by chosen country.
+I will be able to get
+* the amount of cases
+* total recovered
+* total deceased
+
+I will use the data per country and increase / decrease the difficulty based om the amount of cases.
 
 <!-- This would be a good place for your data life cycle ♻️-->
 ## Data life cycle
