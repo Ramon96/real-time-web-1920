@@ -56,6 +56,14 @@ I will be able to get the amount of cases, recovered and deceases from this api 
 
 <!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
 ## Wishlist
+- [ ] Collition detection.
+- [ ] Random decease when no one is sick.
+- [ ] Single player experience.
+- [ ] Rooms per country.
+- [ ] Preventing players from walking outside the canvas
+- [ ] scaling the canvas (or forcing a certain width
+- [ ] Obstacles
+- [ ] Oath, using your picture as your player pawn
 
 <!-- How about a license here? 📜  -->
 ## License
