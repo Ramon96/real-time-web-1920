@@ -147,7 +147,7 @@
     function distance(x1, y1, x2, y2) {
         const xDist = x2 - x1
         const yDist = y2 - y1
-        
+
       //https://nl.wikipedia.org/wiki/Stelling_van_Pythagoras
         return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))
       }
@@ -164,6 +164,8 @@
 
 
 // Todo
+// voorkom movement buiten het canvas
 // voeg bots toe die een random velocity krijgen
 // laat de bots bouncen als ze uit het de canvas width gaan
 // hoeveelheid bots laten bepalen op basis van de coronavirus data
+// resize herberekening
