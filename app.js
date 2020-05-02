@@ -44,17 +44,52 @@ app.use(socialRouter);
 
 // Moet dit op de route waar verbinding pas nodig is?
 let users = [];
+let botActive = false;
 io.on('connection', function (socket) {
   socket.emit('greet', users, socket.id)
+
   socket.on('adduser', (data) => {
     socket.broadcast.emit('adduser', data, socket.id)
     let userData = {
       data: data
     }
-    users.push(userData)
-    console.log(users)
+   users.push(userData)
+   // console.log(users)
     
+   if(users.length <= 10 && users.length > 0 && botActive == false){
+     // the host has joined
+     addbots();
+     botActive = true;
+    }
+    if(!data.id.startsWith('bot') && botActive == true && users.length >= 2){
+      console.log('new additional user ' + data.id)
+      removebot();
+    }
   })
+  
+  function addbots(){
+    // de host mag de bots aanmaken, de eerste user die joined is de host
+    // if(users.length <= 10 && users.length > 0 ){
+        io.to(users[0].data.id).emit('addbots', users);
+        console.log('sending emit to ' + users[0].data.id)
+        // botActive = true;
+      // }
+      // als het bovenste niet uitgevoerd word zijn er al bots
+      // if(botActive == true & users.length <= 10 && users.length > 0){
+      //   io.to(users[0].data.id).emit('addbots', users);
+      // }
+  }
+
+  function removebot(){
+        let bot = users.find(userList => {
+          return userList.data.id.startsWith('bot')
+        })
+         console.log(bot.data.id)
+          users = users.filter(target => target.data.id != bot.data.id)
+          io.emit('removeuser', users)
+
+  }
+
 
   socket.on('updateuser', function(user){
     let target = users.find(userList => {
@@ -62,14 +97,20 @@ io.on('connection', function (socket) {
     })
     target.data.x = user.x;
     target.data.y = user.y;
-    
+    target.data.color = user.color
+
     io.emit('updatelocations', users)
   })
+
+
+
 
   socket.on('disconnect', function () {
     socket.id;
     users = users.filter(user => user.data.id != socket.id)
     socket.broadcast.emit('removeuser', users)
+    addbots();
+    // er moet een bot bij komen
   });
 
 });
