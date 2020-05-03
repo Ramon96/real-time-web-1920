@@ -7,6 +7,7 @@
     let radius = 50;
     let defaultColor = '#F03C69';
     let botColor = '#82A0C2';
+    let dots;
 
     //client dot
     let client = {
@@ -47,8 +48,6 @@
         if (e.key == "k") {
             client.color = "#4ef542";
         }
-
-
         socket.emit('updateuser', client)
 
     }
@@ -177,19 +176,69 @@
                 }
             }
 
-
             let botPosition = {
                 x: botX,
                 y: botY,
                 id: 'bot' + makeid(10),
-                color: botColor
+                color: botColor,
+                velocity: {
+                    x: Math.random() - 0.5,
+                    y: Math.random() - 0.5
+                }
             }
 
             dots.push(botPosition)
-
             addUser(botPosition, true)
         }
+        
+        moveBots(dots)
     })
+
+    // if (e.key == "a") {
+    //     if (client.x >= (0 + radius)) {
+    //         client.x -= 10;
+    //     }
+    // }
+    // if (e.key == "s") {
+    //     if (client.y <= (canvas.height - radius)) {
+    //         client.y += 10;
+    //     }
+    // }
+    // if (e.key == "d") {
+    //     if (client.x <= (canvas.width - radius)) {
+    //         client.x += 10;
+    //     }
+    // }
+    // if (e.key == "w") {
+    //     if (client.y >= (0 + radius)) {
+    //         client.y -= 10;
+    //     }
+    // }
+
+    function moveBots(data){
+        let bots = data.filter(userList => {
+            return userList.id.startsWith('bot')
+        })
+        console.log('im called')
+        function movement(){
+            for (let i = 0; i < bots.length; i++) {
+                if(bots[i].x - radius <= 0 || bots[i].x + radius >= canvas.width){
+                    bots[i].velocity.x = -bots[i].velocity.x
+                }
+                if(bots[i].y - radius <= 0 || bots[i].y + radius >= canvas.height){
+                    bots[i].velocity.y = -bots[i].velocity.y
+                }
+
+            bots[i].x += bots[i].velocity.x;
+            bots[i].y += bots[i].velocity.y;
+
+
+            // socket.emit('updateuser', bots[i])
+            }
+            requestAnimationFrame(movement)
+        }
+        requestAnimationFrame(movement);
+    }
 
 
     // draw the user
@@ -256,7 +305,6 @@
 
 
 // Todo
-// voeg bots toe die een random velocity krijgen 
 // laat de bots bouncen als ze uit het de canvas width gaan
 // hoeveelheid bots laten bepalen op basis van de coronavirus data
 // resize herberekening
