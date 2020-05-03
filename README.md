@@ -76,11 +76,11 @@ When an user is disconnected, that user will be removed from the userlist and th
 
 <!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
 ## Wishlist
-- [ ] Collition detection.
+- [x] Collition detection.
 - [ ] Random decease when no one is sick.
 - [ ] Single player experience.
 - [ ] Rooms per country.
-- [ ] Preventing players from walking outside the canvas
+- [x] Preventing players from walking outside the canvas
 - [ ] scaling the canvas (or forcing a certain width
 - [ ] Obstacles
 - [ ] Oath, using your picture as your player pawn
