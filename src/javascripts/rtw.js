@@ -161,6 +161,8 @@
         if(data.length <= 10){
             nmbr =  10 - data.length ; 
         }
+
+        console.log(nmbr)
         
         for (let j = 0; j < nmbr; j++) {
             let botX = randomIntFromRange(radius, canvas.width - radius);

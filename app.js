@@ -45,6 +45,7 @@ app.use(socialRouter);
 // Moet dit op de route waar verbinding pas nodig is?
 let users = [];
 let botActive = false;
+let host = undefined;
 io.on('connection', function (socket) {
   socket.emit('greet', users, socket.id)
 
@@ -54,8 +55,8 @@ io.on('connection', function (socket) {
       data: data
     }
    users.push(userData)
-   // console.log(users)
-    
+   checkHost();
+
    if(users.length <= 10 && users.length > 0 && botActive == false){
      // the host has joined
      addbots();
@@ -66,28 +67,32 @@ io.on('connection', function (socket) {
       removebot();
     }
   })
+
   
   function addbots(){
-    // de host mag de bots aanmaken, de eerste user die joined is de host
-    // if(users.length <= 10 && users.length > 0 ){
-        io.to(users[0].data.id).emit('addbots', users);
-        console.log('sending emit to ' + users[0].data.id)
-        // botActive = true;
-      // }
-      // als het bovenste niet uitgevoerd word zijn er al bots
-      // if(botActive == true & users.length <= 10 && users.length > 0){
-      //   io.to(users[0].data.id).emit('addbots', users);
-      // }
+        io.to(host).emit('addbots', users);
+        console.log('sending emit to ' + host)
   }
 
   function removebot(){
         let bot = users.find(userList => {
           return userList.data.id.startsWith('bot')
         })
-         console.log(bot.data.id)
+        // maar wast asl er geen bots meer zijn
           users = users.filter(target => target.data.id != bot.data.id)
           io.emit('removeuser', users)
 
+  }
+
+  function checkHost(){
+    if (host == undefined){
+      let user = users.filter(userList => {
+      return !userList.data.id.startsWith('bot');
+    })
+    console.log(user)
+      host = user[0].data.id;
+
+  }
   }
 
 
@@ -109,8 +114,13 @@ io.on('connection', function (socket) {
     socket.id;
     users = users.filter(user => user.data.id != socket.id)
     socket.broadcast.emit('removeuser', users)
+    if(host == socket.id){
+      console.log('the host has left')
+      host = undefined;
+      // checkHost();
+    }
     addbots();
-    // er moet een bot bij komen
+    
   });
 
 });
