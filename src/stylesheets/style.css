@@ -6,8 +6,6 @@ html,body{
 
 .area{
     border: 1px solid black;
-    height: 80%;
-    width: 80%;
     margin: auto;
     display: block;
 }
