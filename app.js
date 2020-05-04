@@ -65,7 +65,7 @@ io.on('connection', function (socket) {
     }
     if (!data.id.startsWith('bot') && botActive == true && users.length >= 2) {
       console.log('new additional user ' + data.id)
-      removebot();
+      // removebot(); // hier gaat hij op z'n bek
     }
   })
 
@@ -76,6 +76,7 @@ io.on('connection', function (socket) {
   }
 
   function removebot() {
+    console.log('removing bot')
     let bot = users.find(userList => {
       return userList.data.id.startsWith('bot')
     })
@@ -83,10 +84,10 @@ io.on('connection', function (socket) {
     users = users.filter(target => target.data.id != bot.data.id)
     io.emit('removeuser', users)
     io.to(host).emit('removebot', users)
-
   }
 
   function checkHost() {
+    console.log('check host')
     if (host == undefined) {
       let user = users.filter(userList => {
         return !userList.data.id.startsWith('bot');
@@ -102,12 +103,12 @@ io.on('connection', function (socket) {
     let target = users.find(userList => {
       return userList.data.id == user.id
     })
-    // console.log(target)
+    // console.log(users)
     target.data.x = user.x;
     target.data.y = user.y;
     target.data.color = user.color;
     if (target.data.velocity) {
-      target.data.velocity.velocity
+      target.data.velocity  = user.velocity
     }
     // console.log('location emit')
     io.emit('updatelocations', users)

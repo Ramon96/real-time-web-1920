@@ -47,10 +47,6 @@
 
         if (e.key == "k") {
             client.color = "#4ef542";
-            // window.cancelAnimationFrame(function () {
-            //     moveThebots(bots)
-            // })
-            cancelAnimationFrame(movementAnimation)
         }
         socket.emit('updateuser', client)
 
@@ -129,14 +125,11 @@
             if (distance(client.x, client.y, users[i].data.x, users[i].data.y) - radius * 2 < 0) {
                 // console.log('collision detected with ' + users[i].data.id)
 
-                // collision with bot
-                if (users[i].data.id.startsWith('bot') && client.color == "#4ef542" && users[i].data.color == botColor) {
-                    users[i].data.color = "#4ef542";
-                    console.log(users[i].data.color)
-                    socket.emit('updateuser', users[i].data)
-
-
-                }
+                // // collision with bot
+                // if (users[i].data.id.startsWith('bot') && client.color == "#4ef542" && users[i].data.color == botColor) {
+                //     users[i].data.color = "#4ef542";
+                //     socket.emit('updateuser', users[i])
+                // }
                 // infect player
                 if (users[i].data.color == "#4ef542" && client.color == defaultColor) {
                     client.color = users[i].data.color;
@@ -207,11 +200,11 @@
         //     moveThebots(bots)
         // })
         cancelAnimationFrame(movementAnimation);
-        moveBots(bots)
+        moveThebots(bots)
     })
 
     function moveBots(data) {
-        console.log("move bots is called")
+        // console.log("move bots is called")
         // get all the bots
         let bots = data.filter(userList => {
             return userList.id.startsWith('bot')
@@ -221,7 +214,6 @@
     }
 
     function moveThebots(bots) {
-
         for (let i = 0; i < bots.length; i++) {
             // flip te velocity if it bounces to the wall
             if (bots[i].x - radius <= 0 || bots[i].x + radius >= canvas.width) {
@@ -238,7 +230,7 @@
 
             //let the server know about our new location
             // console.log('emitting ' + bots[i].id)
-            console.log(bots)
+            // console.log(bots)
             socket.emit('updateuser', bots[i])
         }
         movementAnimation = requestAnimationFrame(function () {
