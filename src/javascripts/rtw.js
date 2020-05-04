@@ -7,7 +7,7 @@
     let radius = 50;
     let defaultColor = '#F03C69';
     let botColor = '#82A0C2';
-    let dots;
+    let movementAnimation;
 
     //client dot
     let client = {
@@ -47,6 +47,10 @@
 
         if (e.key == "k") {
             client.color = "#4ef542";
+            // window.cancelAnimationFrame(function () {
+            //     moveThebots(bots)
+            // })
+            cancelAnimationFrame(movementAnimation)
         }
         socket.emit('updateuser', client)
 
@@ -63,7 +67,6 @@
         let clientY = randomIntFromRange(radius, canvas.height - radius);
 
         for (let i = 0; i < data.length; i++) {
-            console.log(data[i].data)
             if (distance(clientX, clientY, data[i].data.x, data[i].data.y) - radius * 2 < 0) {
                 clientX = randomIntFromRange(radius, canvas.width - radius);
                 clientY = randomIntFromRange(radius, canvas.height - radius);
@@ -111,6 +114,7 @@
 
     // when a user is moving
     socket.on('updatelocations', function (users) {
+        // console.log('locations updated')
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < users.length; i++) {
             addUser(users[i].data, false)
@@ -123,15 +127,10 @@
             }
             // collision check
             if (distance(client.x, client.y, users[i].data.x, users[i].data.y) - radius * 2 < 0) {
-                console.log('collision detected with ' + users[i].data.id)
-
-                // if (users[i].data.color != defaultColor && client.color == defaultColor && users[i].data.color != botColor) {
-                //     client.color = users[i].data.color;
-                //     socket.emit('updateuser', client)
-                // }
+                // console.log('collision detected with ' + users[i].data.id)
 
                 // collision with bot
-                if(users[i].data.id.startsWith('bot') && client.color == "#4ef542" && users[i].data.color == botColor){
+                if (users[i].data.id.startsWith('bot') && client.color == "#4ef542" && users[i].data.color == botColor) {
                     users[i].data.color = "#4ef542";
                     console.log(users[i].data.color)
                     socket.emit('updateuser', users[i].data)
@@ -157,17 +156,17 @@
 
         // console.log(data.data) deze moet ook aan de array toegevoegd worden zodra bots geadd kunnen worden op user disconnect
 
-        if(data.length <= 10){
-            nmbr =  10 - data.length ; 
+        if (data.length <= 10) {
+            nmbr = 10 - data.length;
         }
 
         console.log(nmbr)
-        
+
         for (let j = 0; j < nmbr; j++) {
             let botX = randomIntFromRange(radius, canvas.width - radius);
             let botY = randomIntFromRange(radius, canvas.height - radius);
 
-            for(let i = 0; i < dots.length; i++){
+            for (let i = 0; i < dots.length; i++) {
                 if (distance(botX, botY, dots[i].x, dots[i].y) - radius * 2 < 0) {
                     botX = randomIntFromRange(radius, canvas.width - radius);
                     botY = randomIntFromRange(radius, canvas.height - radius);
@@ -190,55 +189,63 @@
             dots.push(botPosition)
             addUser(botPosition, true)
         }
-        
+
         moveBots(dots)
     })
 
-    // if (e.key == "a") {
-    //     if (client.x >= (0 + radius)) {
-    //         client.x -= 10;
-    //     }
-    // }
-    // if (e.key == "s") {
-    //     if (client.y <= (canvas.height - radius)) {
-    //         client.y += 10;
-    //     }
-    // }
-    // if (e.key == "d") {
-    //     if (client.x <= (canvas.width - radius)) {
-    //         client.x += 10;
-    //     }
-    // }
-    // if (e.key == "w") {
-    //     if (client.y >= (0 + radius)) {
-    //         client.y -= 10;
-    //     }
-    // }
 
-    function moveBots(data){
+    socket.on('removebot', function (users) {
+        let newBots = users.filter(userList => {
+            return userList.data.id.startsWith('bot')
+        })
+
+        let bots = newBots.map(index => {
+            return index.data
+        })
+        console.log(bots)
+        // window.cancelAnimationFrame(function () {
+        //     moveThebots(bots)
+        // })
+        cancelAnimationFrame(movementAnimation);
+        moveBots(bots)
+    })
+
+    function moveBots(data) {
+        console.log("move bots is called")
+        // get all the bots
         let bots = data.filter(userList => {
             return userList.id.startsWith('bot')
         })
-        console.log('im called')
-        function movement(){
-            for (let i = 0; i < bots.length; i++) {
-                if(bots[i].x - radius <= 0 || bots[i].x + radius >= canvas.width){
-                    bots[i].velocity.x = -bots[i].velocity.x
-                }
-                if(bots[i].y - radius <= 0 || bots[i].y + radius >= canvas.height){
-                    bots[i].velocity.y = -bots[i].velocity.y
-                }
 
+        moveThebots(bots)
+    }
+
+    function moveThebots(bots) {
+
+        for (let i = 0; i < bots.length; i++) {
+            // flip te velocity if it bounces to the wall
+            if (bots[i].x - radius <= 0 || bots[i].x + radius >= canvas.width) {
+                bots[i].velocity.x = -bots[i].velocity.x
+            }
+            if (bots[i].y - radius <= 0 || bots[i].y + radius >= canvas.height) {
+                bots[i].velocity.y = -bots[i].velocity.y
+            }
+            // the actual movement
             bots[i].x += bots[i].velocity.x;
             bots[i].y += bots[i].velocity.y;
 
 
-            // socket.emit('updateuser', bots[i])
-            }
-            requestAnimationFrame(movement)
+
+            //let the server know about our new location
+            // console.log('emitting ' + bots[i].id)
+            console.log(bots)
+            socket.emit('updateuser', bots[i])
         }
-        requestAnimationFrame(movement);
+        movementAnimation = requestAnimationFrame(function () {
+            moveThebots(bots)
+        })
     }
+
 
 
     // draw the user
@@ -257,6 +264,10 @@
         if (!emit) {
             return;
         }
+
+        // if user
+        console.log(data.id)
+        if(!data.id.startsWith('bot')){
         socket.emit('adduser', {
             x: x,
             y: y,
@@ -264,6 +275,20 @@
             color: color
         })
     }
+    else{
+        // bot
+        socket.emit('adduser', {
+            x: x,
+            y: y,
+            id: data.id,
+            color: color,
+            velocity: {
+                x: data.velocity.x,
+                y: data.velocity.y
+            }
+        })
+    }
+}
 
 
 
@@ -292,11 +317,11 @@
 
     // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
     function makeid(length) {
-        var result           = '';
-        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         var charactersLength = characters.length;
-        for ( var i = 0; i < length; i++ ) {
-           result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
     }
@@ -305,6 +330,7 @@
 
 
 // Todo
-// laat de bots bouncen als ze uit het de canvas width gaan
+// zorg ervoor dat de client een movement update krijgt wanneer een bot weg gehaald word, je kan geen bots bewegen die er niet meer zijn
 // hoeveelheid bots laten bepalen op basis van de coronavirus data
-// resize herberekening
+// ziekte mechanic
+// readme fixen

@@ -46,6 +46,7 @@ app.use(socialRouter);
 let users = [];
 let botActive = false;
 let host = undefined;
+
 io.on('connection', function (socket) {
   socket.emit('greet', users, socket.id)
 
@@ -54,56 +55,61 @@ io.on('connection', function (socket) {
     let userData = {
       data: data
     }
-   users.push(userData)
-   checkHost();
+    users.push(userData)
+    checkHost();
 
-   if(users.length <= 10 && users.length > 0 && botActive == false){
-     // the host has joined
-     addbots();
-     botActive = true;
+    if (users.length <= 10 && users.length > 0 && botActive == false) {
+      // the host has joined
+      addbots();
+      botActive = true;
     }
-    if(!data.id.startsWith('bot') && botActive == true && users.length >= 2){
+    if (!data.id.startsWith('bot') && botActive == true && users.length >= 2) {
       console.log('new additional user ' + data.id)
       removebot();
     }
   })
 
-  
-  function addbots(){
-        io.to(host).emit('addbots', users);
-        console.log('sending emit to ' + host)
+
+  function addbots() {
+    io.to(host).emit('addbots', users);
+    console.log('sending emit to ' + host)
   }
 
-  function removebot(){
-        let bot = users.find(userList => {
-          return userList.data.id.startsWith('bot')
-        })
-        // maar wast asl er geen bots meer zijn
-          users = users.filter(target => target.data.id != bot.data.id)
-          io.emit('removeuser', users)
-
-  }
-
-  function checkHost(){
-    if (host == undefined){
-      let user = users.filter(userList => {
-      return !userList.data.id.startsWith('bot');
+  function removebot() {
+    let bot = users.find(userList => {
+      return userList.data.id.startsWith('bot')
     })
-    console.log(user)
+    // maar wast asl er geen bots meer zijn
+    users = users.filter(target => target.data.id != bot.data.id)
+    io.emit('removeuser', users)
+    io.to(host).emit('removebot', users)
+
+  }
+
+  function checkHost() {
+    if (host == undefined) {
+      let user = users.filter(userList => {
+        return !userList.data.id.startsWith('bot');
+      })
+      console.log(user)
       host = user[0].data.id;
 
-  }
+    }
   }
 
 
-  socket.on('updateuser', function(user){
+  socket.on('updateuser', function (user) {
     let target = users.find(userList => {
       return userList.data.id == user.id
     })
+    // console.log(target)
     target.data.x = user.x;
     target.data.y = user.y;
-    target.data.color = user.color
-
+    target.data.color = user.color;
+    if (target.data.velocity) {
+      target.data.velocity.velocity
+    }
+    // console.log('location emit')
     io.emit('updatelocations', users)
   })
 
@@ -114,13 +120,13 @@ io.on('connection', function (socket) {
     socket.id;
     users = users.filter(user => user.data.id != socket.id)
     socket.broadcast.emit('removeuser', users)
-    if(host == socket.id){
+    if (host == socket.id) {
       console.log('the host has left')
       host = undefined;
       // checkHost();
     }
     addbots();
-    
+
   });
 
 });
