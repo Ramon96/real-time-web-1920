@@ -4,7 +4,7 @@ let coronaApi = require('../helpers/corona-api');
 
 coronaApi('live/country/netherlands/status/confirmed')
     .then(res => {
-        // console.log(res)
+        console.log(res)
         // const netherlands = res.find(entry => {
         //     console.log(entry)
         //     // if(entry == "NL"){

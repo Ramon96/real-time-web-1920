@@ -65,7 +65,7 @@ io.on('connection', function (socket) {
     }
     if (!data.id.startsWith('bot') && botActive == true && users.length >= 2) {
       console.log('new additional user ' + data.id)
-      // removebot(); // hier gaat hij op z'n bek
+       removebot(); // hier gaat hij op z'n bek
     }
   })
 
@@ -76,18 +76,18 @@ io.on('connection', function (socket) {
   }
 
   function removebot() {
-    console.log('removing bot')
+    // console.log('removing bot')
     let bot = users.find(userList => {
       return userList.data.id.startsWith('bot')
     })
-    // maar wast asl er geen bots meer zijn
+    // maar wat als er geen bots meer zijn
     users = users.filter(target => target.data.id != bot.data.id)
-    io.emit('removeuser', users)
     io.to(host).emit('removebot', users)
+    io.emit('removeuser', users)
   }
 
   function checkHost() {
-    console.log('check host')
+    // console.log('check host')
     if (host == undefined) {
       let user = users.filter(userList => {
         return !userList.data.id.startsWith('bot');
@@ -103,11 +103,17 @@ io.on('connection', function (socket) {
     let target = users.find(userList => {
       return userList.data.id == user.id
     })
+    // single responsability pattern missing
+    if(!target){
+      // event emit om de host te laten weten dat de bot niet meer bestaat, hoeft niet want dat doe ik ergens anders al (brain food) 86
+      return
+    }
     // console.log(users)
     target.data.x = user.x;
     target.data.y = user.y;
     target.data.color = user.color;
     if (target.data.velocity) {
+      // target.data.velocity  = user.velocity
       target.data.velocity  = user.velocity
     }
     // console.log('location emit')

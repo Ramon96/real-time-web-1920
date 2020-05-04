@@ -57,8 +57,6 @@
         //userId = id;
 
         // prevent overlap
-        // let clientX = Math.floor(Math.random() * Math.floor(canvas.width));
-        // let clientY =  Math.floor(Math.random() * Math.floor(canvas.height));
         let clientX = randomIntFromRange(radius, canvas.width - radius);
         let clientY = randomIntFromRange(radius, canvas.height - radius);
 
@@ -126,10 +124,11 @@
                 // console.log('collision detected with ' + users[i].data.id)
 
                 // // collision with bot
-                // if (users[i].data.id.startsWith('bot') && client.color == "#4ef542" && users[i].data.color == botColor) {
-                //     users[i].data.color = "#4ef542";
-                //     socket.emit('updateuser', users[i])
-                // }
+                if (users[i].data.id.startsWith('bot') && client.color == "#4ef542" && users[i].data.color == botColor) {
+                    users[i].data.color = "#4ef542";
+                    socket.emit('updateuser', users[i].data)
+                }
+
                 // infect player
                 if (users[i].data.color == "#4ef542" && client.color == defaultColor) {
                     client.color = users[i].data.color;
@@ -195,12 +194,11 @@
         let bots = newBots.map(index => {
             return index.data
         })
-        console.log(bots)
-        // window.cancelAnimationFrame(function () {
-        //     moveThebots(bots)
-        // })
+
         cancelAnimationFrame(movementAnimation);
-        moveThebots(bots)
+        // hier ergens gaat het mis :(
+        moveBots(bots)
+        // moveThebots(bots) kan ook
     })
 
     function moveBots(data) {
