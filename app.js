@@ -47,7 +47,7 @@ app.use(socialRouter);
 const playerRadius = 50;
 
 // This changes the setInterval time speed of the bot movement, lower results in more lagg
-const botInterval = 160000;
+const botInterval = 16;
 
 const gameMap = {
   width: 980,
@@ -62,20 +62,26 @@ class defaultPlayerData {
         x: 0,
         y: 0
       },
-      this.isSick = false;
-      this.radius = playerRadius;
+    this.isSick = false;
+    this.radius = playerRadius;
+    this.color = '#F03C69';
   }
 
   greet() {
     console.log("Hi im " + this.id)
+  }
+
+  makePlayerSick() {
+    this.isSick = true;
+    this.color = '#4ef542';
   }
 }
 
 // Controllable player settings
 class defaultUserData extends defaultPlayerData {
   constructor(id, position, isSick, radius, color) {
-    super(id, position, isSick, radius);
-    this.color = '#F03C69';
+    super(id, position, isSick, radius, color);
+    this.color ='#F03C69';
   }
 }
 
@@ -91,10 +97,10 @@ class defaultBotData extends defaultPlayerData {
   }
 
   move() {
-    if(this.position.x - this.radius <= 0 || this.position.x + this.radius >= gameMap.width){
+    if (this.position.x - this.radius <= 0 || this.position.x + this.radius >= gameMap.width) {
       this.velocity.x = -this.velocity.x
     }
-    if(this.position.y - this.radius <= 0 || this.position.y + this.radius >= gameMap.height){
+    if (this.position.y - this.radius <= 0 || this.position.y + this.radius >= gameMap.height) {
       this.velocity.y = -this.velocity.y
     }
     this.position.x = this.position.x + this.velocity.x;
@@ -133,19 +139,57 @@ io.on('connection', function (socket) {
     let targetPlayer = userList.find(player => player.id == playerData.id)
     targetPlayer.position.x = playerData.position.x;
     targetPlayer.position.y = playerData.position.y;
+    onMovement(targetPlayer)
     io.emit('drawPlayers', [...userList, ...botList])
   })
 
   removeBots();
   addBots();
   moveBots()
-
+  makeRandomUserSick()
 })
 
 function registerUser(id) {
   let newUser = new defaultUserData(id);
   newUser.position = getAvailablePosition();
   userList.push(newUser)
+}
+
+
+
+function onMovement(player) {
+  if (player.isSick) {
+    // checks if the player collided with another player
+    getCollidingPlayers(player).forEach(collidedPlayer => {
+      collidedPlayer.makePlayerSick();
+    })
+
+  }
+}
+
+function getCollidingPlayers(target) {
+
+  let combinedList = [...userList, ...botList];
+  return combinedList.filter(index => {
+      if (index.id == target.id) {
+          return false;
+      }
+      return (distance(index.position.x, index.position.y, target.position.x, target.position.y) < target.radius * 2)
+  });
+}
+
+function makeRandomPlayerSick() {
+  const sharedList = [...userList, ...botList];
+  const randomIndex = Math.floor(Math.random() * (sharedList.length));
+  sharedList[randomIndex].makePlayerSick();
+  console.log(sharedList[randomIndex]);
+  io.emit('drawPlayers', [...userList, ...botList])
+}
+
+function makeRandomUserSick() {
+  const randomIndex = Math.floor(Math.random() * (userList.length));
+userList[randomIndex].makePlayerSick();
+io.emit('drawPlayers', [...userList, ...botList])
 }
 
 function removeBots() {
@@ -179,6 +223,7 @@ function moveBots() {
   setInterval(function () {
     botList.forEach(bot => {
       bot.move();
+      onMovement(bot);
     });
     io.emit('drawPlayers', [...userList, ...botList])
   }, botInterval)
@@ -232,105 +277,6 @@ function makeid(length) {
   }
   return 'bot' + result;
 }
-
-// Moet dit op de route waar verbinding pas nodig is?
-// let users = [];
-// let botActive = false;
-// let host = undefined;
-
-// io.on('connection', function (socket) {
-//   socket.emit('greet', users, socket.id)
-
-//   socket.on('adduser', (data) => {
-//     socket.broadcast.emit('adduser', data, socket.id)
-//     let userData = {
-//       data: data
-//     }
-//     users.push(userData)
-//     checkHost();
-
-//     if (users.length <= 10 && users.length > 0 && botActive == false) {
-//       // the host has joined
-//       addbots();
-//       botActive = true;
-//     }
-//     if (!data.id.startsWith('bot') && botActive == true && users.length >= 2) {
-//       console.log('new additional user ' + data.id)
-//        removebot(); // hier gaat hij op z'n bek
-//     }
-//   })
-
-
-//   function addbots() {
-//     io.to(host).emit('addbots', users);
-//     console.log('sending emit to ' + host)
-//   }
-
-//   function removebot() {
-//     // console.log('removing bot')
-//     let bot = users.find(userList => {
-//       return userList.data.id.startsWith('bot')
-//     })
-//     // maar wat als er geen bots meer zijn
-//     users = users.filter(target => target.data.id != bot.data.id)
-//     io.to(host).emit('removebot', users)
-//     io.emit('removeuser', users)
-//   }
-
-//   function checkHost() {
-//     // console.log('check host')
-//     if (host == undefined) {
-//       let user = users.filter(userList => {
-//         return !userList.data.id.startsWith('bot');
-//       })
-//       console.log(user)
-//       host = user[0].data.id;
-
-//     }
-//   }
-
-
-//   socket.on('updateuser', function (user) {
-//     let target = users.find(userList => {
-//       return userList.data.id == user.id
-//     })
-//     // single responsability pattern missing
-//     if(!target){
-//       // event emit om de host te laten weten dat de bot niet meer bestaat, hoeft niet want dat doe ik ergens anders al (brain food) 86
-//       return
-//     }
-//     // console.log(users)
-//     target.data.x = user.x;
-//     target.data.y = user.y;
-//     target.data.color = user.color;
-//     if (target.data.velocity) {
-//       // target.data.velocity  = user.velocity
-//       target.data.velocity  = user.velocity
-//     }
-//     // console.log('location emit')
-//     io.emit('updatelocations', users)
-//   })
-
-
-
-
-//   socket.on('disconnect', function () {
-//     socket.id;
-//     users = users.filter(user => user.data.id != socket.id)
-//     socket.broadcast.emit('removeuser', users)
-//     if (host == socket.id) {
-//       console.log('the host has left')
-//       host = undefined;
-//       // checkHost();
-//     }
-//     addbots();
-
-//   });
-
-// });
-
-
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
