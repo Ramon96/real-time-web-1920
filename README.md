@@ -131,7 +131,7 @@ function distance(x1, y1, x2, y2) {
 
 <!-- This would be a good place for your data life cycle ♻️-->
 ## Data life cycle
-![Datalifecycle](https://github.com/Ramon96/real-time-web-1920/blob/master/readme-resources/datading.png?raw=true)
+![Datalifecycle](https://github.com/Ramon96/real-time-web-1920/blob/master/readme-resources/b06c5197-74f0-434b-b0ab-2a7bf4a5cf5e.jpg?raw=true)
 
 ## Data model on the server
 The server keeps track of all the important data which means that the server has the single source of truth. 
