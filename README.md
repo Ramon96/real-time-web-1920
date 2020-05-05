@@ -34,15 +34,97 @@ nodemon
 
 <!-- ...but how does one use this project? What are its features 🤔 -->
 ## Features
+When reffered to players I refer to Users and bots collectively.
+Users are real life players. 
+And bots move around randomly.
+
+
 ### Moving around
 The server keeps track of all player locations and allows players to move around using the **asdw** keys
+Whenever the client presses one of these keys, their user data will be send to the server with updatelocations emit
 
+```js 
+socket.emit('updateLocations', playerData);
 ```
-io.emit('updatelocations', users)
+
+However bots move around differenly.
+Every bot as a random velocity, this velocity updates their X and Y position.
+When the bot hits an wall then their velocity will be flipped.
+
+```js
+// bot movment
+  move() {
+    if (this.position.x - this.radius <= 0 || this.position.x + this.radius >= gameMap.width) {
+      this.velocity.x = -this.velocity.x
+    }
+    if (this.position.y - this.radius <= 0 || this.position.y + this.radius >= gameMap.height) {
+      this.velocity.y = -this.velocity.y
+    }
+    this.position.x = this.position.x + this.velocity.x;
+    this.position.y = this.position.y + this.velocity.y;
+  }
 ```
+
 
 ### Infecting
-(In progress)
+There are 2 ways an player can get sick.
+
+1. at random 
+When there are no players that are sick then the server wil pick one at random from the playerlist and make that person/bot sick.
+
+```js
+function makeRandomPlayerSick() {
+  const sharedList = [...userList, ...botList];
+  const randomIndex = Math.floor(Math.random() * (sharedList.length));
+  if(sharedList[randomIndex].isSick == false){
+  sharedList[randomIndex].makePlayerSick();
+  recover(sharedList[randomIndex])
+  io.emit('drawPlayers', [...userList, ...botList])
+}
+}
+```
+
+2. by collision.
+The server checks the distance between the sick player and every other dots.
+This is done with pythagoras theorem and looks a little like this.
+
+```js
+
+function onMovement(player) {
+  if (player.isSick) {
+    // checks if the player collided with another player
+    getCollidingPlayers(player).forEach(collidedPlayer => {
+      if(collidedPlayer.isSick == false){
+      collidedPlayer.makePlayerSick();
+      recover(collidedPlayer);
+      }
+    })
+
+  }
+}
+
+function getCollidingPlayers(target) {
+
+  let combinedList = [...userList, ...botList];
+  return combinedList.filter(index => {
+      if (index.id == target.id) {
+          return false;
+      }
+      return (distance(index.position.x, index.position.y, target.position.x, target.position.y) < target.radius * 2)
+  });
+}
+
+function distance(x1, y1, x2, y2) {
+  const xDist = x2 - x1
+  const yDist = y2 - y1
+
+  //https://nl.wikipedia.org/wiki/Stelling_van_Pythagoras
+  // return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))
+  return Math.abs(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)))
+}
+
+
+``` 
 
 <!-- What external data source is featured in your project and what are its properties 🌠 -->
 ## Api
@@ -158,10 +240,6 @@ When an user is disconnected, that user will be removed from the userlist, a bot
     console.log(socket.id + ' has disconnected');
   });
 ```
-
-
-## Utility functions 
-
 
 <!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
 ## Wishlist
