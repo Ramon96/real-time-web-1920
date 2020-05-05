@@ -127,16 +127,7 @@ function distance(x1, y1, x2, y2) {
 ``` 
 
 <!-- What external data source is featured in your project and what are its properties 🌠 -->
-## Api
-Im currently using the [Covid19api](https://covid19api.com/)
-The Api requires no key and documentation can be read [here](https://documenter.getpostman.com/view/10808728/SzS8rjbc)
 
-I will be able to get
-* the amount of cases
-* total recovered
-* total deceased
-
-I will use the data per country and increase / decrease the difficulty based om the amount of cases.
 
 <!-- This would be a good place for your data life cycle ♻️-->
 ## Data life cycle
@@ -246,7 +237,7 @@ When an user is disconnected, that user will be removed from the userlist, a bot
 - [x] Collition detection.
 - [x] Random decease when no one is sick.
 - [x] Single player experience.
-- [ ] Rooms per country.
+- [ ] Rooms per country using the corona virus api.
 - [x] Preventing players from walking outside the canvas
 - [x] scaling the canvas (or forcing a certain width)
 - [ ] Obstacles
