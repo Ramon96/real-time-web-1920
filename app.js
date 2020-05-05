@@ -84,8 +84,6 @@ class defaultUserData extends defaultPlayerData {
   constructor(id, position, isSick, radius, color) {
     super(id, position, isSick, radius, color);
   }
-
-
 }
 
 // Bot settings

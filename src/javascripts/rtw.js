@@ -11,7 +11,6 @@
     socket.on('getId', function(id){
         playerId = id;
         console.log('Welcome ' + playerId)
-
     })
     
     socket.on('drawPlayers', function(players){
