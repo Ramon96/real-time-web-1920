@@ -10,6 +10,7 @@
 Even tho it looks like an game, you cant win or lose. The idea is to see if people will keep distance when they are a different color and notice they can infect others with their color. Or if they want to spread it. It is also intressting to see if people who are not infected if they try to keep their distance with other users
 
 <!-- Maybe a table of contents here? 📚 -->
+## Table of content
 - [Corona Social experiment.](#corona-social-experiment)
   * [Link to live demo:](#link-to-live-demo-)
   * [Description](#description)
