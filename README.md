@@ -133,6 +133,97 @@ function distance(x1, y1, x2, y2) {
 ## Data life cycle
 ![Datalifecycle](https://github.com/Ramon96/real-time-web-1920/blob/master/readme-resources/datading.png?raw=true)
 
+## Data model on the server
+The server keeps track of all the important data which means that the server has the single source of truth. 
+The server has the *Game Settings*
+
+```js
+// Size of the circle
+const playerRadius = 50;
+
+// This changes the setInterval time speed of the bot movement, lower results in more lagg
+const botInterval = 16;
+
+const gameMap = {
+  width: 980,
+  height: 750
+};
+```
+
+It also holds the blue prints for the players, this extends to the users and bots
+
+```js
+// properties every player has
+class defaultPlayerData {
+  constructor(id) {
+    this.id = id;
+    this.position = {
+        x: 0,
+        y: 0
+      },
+    this.isSick = false;
+    this.radius = playerRadius;
+    this.color = '#F03C69';
+  }
+
+  makePlayerSick() {
+    this.isSick = true;
+    this.color = '#4ef542';
+  }
+
+  cure(){
+    this.isSick = false;
+    this.color = '#F03C69';
+  }
+
+}
+
+// Controllable player settings
+class defaultUserData extends defaultPlayerData {
+  constructor(id, position, isSick, radius, color) {
+    super(id, position, isSick, radius, color);
+  }
+}
+
+// Bot settings
+class defaultBotData extends defaultPlayerData {
+  constructor(id, position, isSick, velocity, color, radius) {
+    super(id, position, isSick, radius);
+    this.velocity = {
+      x: 0,
+      y: 0,
+    }
+    this.color = '#82A0C2';
+
+  }
+  cure(){
+    this.isSick = false;
+    this.color = '#82A0C2';
+  }
+
+  move() {
+    if (this.position.x - this.radius <= 0 || this.position.x + this.radius >= gameMap.width) {
+      this.velocity.x = -this.velocity.x
+    }
+    if (this.position.y - this.radius <= 0 || this.position.y + this.radius >= gameMap.height) {
+      this.velocity.y = -this.velocity.y
+    }
+    this.position.x = this.position.x + this.velocity.x;
+    this.position.y = this.position.y + this.velocity.y;
+  }
+}
+```
+
+and to round it all of, the full list of users and bots (with their position, velocity's, colors and decease status)
+
+```js
+// List containing all the controllable players
+let userList = [];
+// List  containing all the bots
+const botList = [];
+```
+
+
 ## Socket events
 
 ### getId
