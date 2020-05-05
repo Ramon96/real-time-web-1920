@@ -4,8 +4,17 @@ html,body{
     padding: 0;
 }
 
+h1{
+    text-align: center;
+}
+
 .area{
     border: 1px solid black;
     margin: auto;
     display: block;
+}
+
+p{
+    text-align: center;
+    font-size: 1em;
 }

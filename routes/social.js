@@ -17,7 +17,7 @@ coronaApi('live/country/netherlands/status/confirmed')
     })
 
 router.get('/social', function(req, res, next) {
-    res.render('social', { title: 'social'});
+    res.render('social', { title: 'Social experiment'});
 });
 
 module.exports = router;

@@ -67,22 +67,25 @@ class defaultPlayerData {
     this.color = '#F03C69';
   }
 
-  greet() {
-    console.log("Hi im " + this.id)
-  }
-
   makePlayerSick() {
     this.isSick = true;
     this.color = '#4ef542';
   }
+
+  cure(){
+    this.isSick = false;
+    this.color = '#F03C69';
+  }
+
 }
 
 // Controllable player settings
 class defaultUserData extends defaultPlayerData {
   constructor(id, position, isSick, radius, color) {
     super(id, position, isSick, radius, color);
-    this.color ='#F03C69';
   }
+
+
 }
 
 // Bot settings
@@ -93,6 +96,11 @@ class defaultBotData extends defaultPlayerData {
       x: 0,
       y: 0,
     }
+    this.color = '#82A0C2';
+
+  }
+  cure(){
+    this.isSick = false;
     this.color = '#82A0C2';
   }
 
@@ -145,8 +153,10 @@ io.on('connection', function (socket) {
 
   removeBots();
   addBots();
-  moveBots()
-  makeRandomUserSick()
+  if(botList.length > 0){
+    moveBots();
+  }
+  checkSickness()
 })
 
 function registerUser(id) {
@@ -155,13 +165,21 @@ function registerUser(id) {
   userList.push(newUser)
 }
 
-
+function recover(player){
+  setTimeout(function(){
+     player.cure();
+     checkSickness()
+  }, 10000)
+}
 
 function onMovement(player) {
   if (player.isSick) {
     // checks if the player collided with another player
     getCollidingPlayers(player).forEach(collidedPlayer => {
+      if(collidedPlayer.isSick == false){
       collidedPlayer.makePlayerSick();
+      recover(collidedPlayer);
+      }
     })
 
   }
@@ -178,19 +196,36 @@ function getCollidingPlayers(target) {
   });
 }
 
+function checkSickness(){
+  // let targetPlayer = userList.find(player => player.id == playerData.id)
+
+  let sharedList = [...userList, ...botList];
+  let sickList = sharedList.filter(player => {
+    return player.isSick == true
+  })
+
+  if(sickList.length <= 0){
+    makeRandomPlayerSick()
+  }
+
+
+}
+
 function makeRandomPlayerSick() {
   const sharedList = [...userList, ...botList];
   const randomIndex = Math.floor(Math.random() * (sharedList.length));
+  if(sharedList[randomIndex].isSick == false){
   sharedList[randomIndex].makePlayerSick();
-  console.log(sharedList[randomIndex]);
+  recover(sharedList[randomIndex])
   io.emit('drawPlayers', [...userList, ...botList])
 }
-
-function makeRandomUserSick() {
-  const randomIndex = Math.floor(Math.random() * (userList.length));
-userList[randomIndex].makePlayerSick();
-io.emit('drawPlayers', [...userList, ...botList])
 }
+
+// function makeRandomUserSick() {
+//   const randomIndex = Math.floor(Math.random() * (userList.length));
+//     userList[randomIndex].makePlayerSick();
+//     io.emit('drawPlayers', [...userList, ...botList])
+// }
 
 function removeBots() {
   if (botList.length > 0) {

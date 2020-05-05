@@ -16,8 +16,14 @@
     
     socket.on('drawPlayers', function(players){
         playerList = [];
+        console.log('emit')
         for(let i = 0; i < players.length; i++){
             playerList.push(new Player(players[i].position.x, players[i].position.y, players[i].radius, players[i].color, players[i].id))
+        }
+
+        let controllable = playerList.find(player => player.id == playerId)
+        if(controllable.color != '#4ef542'){
+            controllable.color = '#FF2D00'
         }
 
         if(!canvasDrawn){
@@ -100,7 +106,5 @@
 
 })();
 
-
 // Todo
-// Een random gebruiker zieken laten worden (als er niet al een gebruiker ziek is)
-// De player de mogelijkheid geven om beter te worden (na een random tijd natuurlijk)
+// client makkelijker kunnen identifceren
