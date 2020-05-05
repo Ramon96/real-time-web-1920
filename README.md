@@ -1,4 +1,5 @@
 # Corona Social experiment.
+![Preview image of the application](https://github.com/Ramon96/real-time-web-1920/blob/master/readme-resources/appPreview.png?raw=true)
 
 <!-- Add a link to your live demo in Github Pages 🌐-->
 ## Link to live demo:
